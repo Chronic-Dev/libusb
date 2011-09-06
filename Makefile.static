@@ -1,0 +1,36 @@
+TARGET=libusb-1.0.a
+
+CFLAGS=-m32 -I. -Ilibusb -Ilibusb/os -Wall -O2 -fPIC -DPIC -DHAVE_CONFIG_H -fvisibility=hidden -std=gnu99 -fgnu89-inline -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign -Wshadow -pthread
+
+OS_OBJ=
+
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Darwin)
+  CFLAGS+=-DOS_DARWIN
+  OS_OBJ = libusb/os/darwin_usb.o
+endif
+
+ifeq ($(UNAME), Linux)
+  CFLAGS+=-DUSBI_TIMERFD_AVAILABLE -DOS_LINUX
+  OS_OBJ = libusb/os/linux_usbfs.o
+endif
+
+objects= \
+	libusb/core.o \
+	libusb/descriptor.o \
+	libusb/io.o \
+	libusb/sync.o \
+	$(OS_OBJ) \
+
+all: $(TARGET)
+
+%.o: %.c
+	$(CC) -o $@ $(CFLAGS) -c $<
+
+$(TARGET): $(objects)
+	$(AR) rcs $@ $^
+
+clean:
+	rm -f libusb/*.o libusb/os/*.o $(TARGET)
+
