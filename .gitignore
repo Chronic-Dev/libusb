@@ -38,3 +38,4 @@ doc/html
 Debug
 Release
 *.user
+libusb-1.0.a
