@@ -32,7 +32,7 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if the system has the type `struct timespec'. */
-#define HAVE_STRUCT_TIMESPEC 1
+/* #undef HAVE_STRUCT_TIMESPEC */
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H 1
@@ -87,7 +87,7 @@
 #define STDC_HEADERS 1
 
 /* Use Posix Threads */
-#define THREADS_POSIX /**/
+/* #undef THREADS_POSIX */
 
 /* timerfd headers available */
 /* #undef USBI_TIMERFD_AVAILABLE */

@@ -1,19 +1,35 @@
 TARGET=libusb-1.0.a
 
-CFLAGS=-m32 -I. -Ilibusb -Ilibusb/os -Wall -O2 -fPIC -DPIC -DHAVE_CONFIG_H -fvisibility=hidden -std=gnu99 -fgnu89-inline -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign -Wshadow -pthread
+CFLAGS=-m32 -I. -Ilibusb -Ilibusb/os -Wall -O2 -DPIC -DHAVE_CONFIG_H -std=gnu99 -fgnu89-inline -Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wno-pointer-sign -Wshadow
 
 OS_OBJ=
 
 UNAME := $(shell uname)
 
 ifeq ($(UNAME), Darwin)
-  CFLAGS+=-DOS_DARWIN
+  CFLAGS+=-fPIC -fvisibility=hidden -pthread -DOS_DARWIN -DHAVE_STRUCT_TIMESPEC=1 -DTHREADS_POSIX
   OS_OBJ = libusb/os/darwin_usb.o
 endif
 
 ifeq ($(UNAME), Linux)
-  CFLAGS+=-DUSBI_TIMERFD_AVAILABLE -DOS_LINUX
+  CFLAGS+=-fPIC -fvisibility=hidden -pthread -DUSBI_TIMERFD_AVAILABLE -DOS_LINUX -DHAVE_STRUCT_TIMESPEC=1 -DTHREADS_POSIX
   OS_OBJ = libusb/os/linux_usbfs.o
+endif
+
+WIN32=
+ifeq ($(findstring CYG,$(UNAME)), CYG)
+  WIN32=1
+  CC=gcc-3
+endif
+ifeq ($(findstring MINGW,$(UNAME)), MINGW)
+  WIN32=1
+  CC=gcc
+endif
+ifdef WIN32
+  CFLAGS+=-DWIN32 -DOS_WINDOWS
+  OS_OBJ = libusb/os/windows_usb.o \
+	libusb/os/threads_windows.o \
+	libusb/os/poll_windows.o
 endif
 
 objects= \
